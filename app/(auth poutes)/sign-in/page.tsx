@@ -1,6 +1,6 @@
 "use client";
 
-import css from "./page.module.css";
+import css from "./SignInPage.module.css";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/lib/api/clientApi";
