@@ -3,10 +3,10 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNoteStore } from '../../lib/api';
+import { useNoteStore } from '../../lib/store/authStore'
 import css from '@/css/NoteForm.module.css';
 import { addNote } from '../../lib/api';
-import type { NewNoteData, Note } from '@/types/note';
+import type { NewNoteData } from '@/types/note';
 
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 export type NotePayload = {
