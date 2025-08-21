@@ -1,9 +1,7 @@
 interface AuthLayoutProps {
     children: React.ReactNode;
-    modal?: boolean;
 }
 
-export default function AuthLayout({ children, modal }: AuthLayoutProps) {
-
+export default function AuthLayout({ children }: AuthLayoutProps) {
     return <>{children}</>;
 }
