@@ -1,15 +1,16 @@
 import { ReactNode } from "react";
+import QueryProvider from "@/components/QueryProvider/QueryProvider";
 
-interface LayoutProps {
+interface RootLayoutProps {
   children: ReactNode;
-  modal?: ReactNode;
 }
 
-export default function RootLayout({ children, modal }: LayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      {children}
-      {modal && <div id="modal">{modal}</div>}
-    </>
+    <html lang="en">
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
+    </html>
   );
 }
