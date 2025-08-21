@@ -1,19 +1,10 @@
-// app/layout.tsx
 import React, { ReactNode } from "react";
-import QueryProvider from "@/components/QueryProvider/QueryProvider";
 
-interface RootLayoutProps {
+interface AuthLayoutProps {
     children: ReactNode;
-    modal: boolean;
+    modal?: boolean;
 }
 
-export default function RootLayout({ children, modal }: RootLayoutProps) {
-
-    return (
-        <html lang="en">
-            <body>
-                <QueryProvider>{children}</QueryProvider>
-            </body>
-        </html>
-    );
+export default function AuthLayout({ children }: AuthLayoutProps) {
+    return <>{children}</>;
 }
