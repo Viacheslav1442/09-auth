@@ -1,5 +1,6 @@
 import css from "./ProfilePage.module.css";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
     title: "Profile",
@@ -14,12 +15,14 @@ export default function ProfilePage() {
             <div className={css.profileCard}>
                 <div className={css.header}>
                     <h1 className={css.formTitle}>Profile Page</h1>
-                    <a href="/profile/edit" className={css.editProfileButton}>Edit Profile</a>
+                    <a href="/profile/edit" className={css.editProfileButton}>
+                        Edit Profile
+                    </a>
                 </div>
 
                 <div className={css.avatarWrapper}>
-                    <img
-                        src="Avatar"
+                    <Image
+                        src="/avatar.jpg"   // шлях до картинки у папці public
                         alt="User Avatar"
                         width={120}
                         height={120}
