@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import type { User } from "@/types/user";
-import type { NotePayload } from "@/components/NoteForm/NoteForm"; // імпорт типу
+import type { NotePayload } from "@/components/NoteForm/NoteForm";
 
 // Auth store
 interface AuthState {
