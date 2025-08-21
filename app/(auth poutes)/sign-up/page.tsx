@@ -7,6 +7,7 @@ import { register } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 import type { User } from "@/types/user";
 import { useAuthStore } from "@/lib/store/authStore";
+import type { AxiosError } from "axios";
 
 export default function SignUpPage() {
     const [error, setError] = useState<string>("");
@@ -19,10 +20,13 @@ export default function SignUpPage() {
             setUser(user);
             router.replace("/profile");
         },
-        onError: (e: any) => setError(e?.response?.data?.message ?? "Registration error"),
+        onError: (e: unknown) => {
+            const err = e as AxiosError<{ message?: string }>;
+            setError(err.response?.data?.message ?? "Registration error");
+        },
     });
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
         const form = new FormData(e.currentTarget);

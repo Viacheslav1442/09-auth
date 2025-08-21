@@ -7,6 +7,7 @@ import { login } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 import type { User } from "@/types/user";
 import { useAuthStore } from "@/lib/store/authStore";
+import type { AxiosError } from "axios";
 
 export default function SignInPage() {
     const [error, setError] = useState<string>("");
@@ -19,7 +20,10 @@ export default function SignInPage() {
             setUser(user);
             router.replace("/profile");
         },
-        onError: (e: any) => setError(e?.response?.data?.message ?? "Login error"),
+        onError: (e: unknown) => {
+            const err = e as AxiosError<{ message?: string }>;
+            setError(err.response?.data?.message ?? "Login error");
+        },
     });
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
