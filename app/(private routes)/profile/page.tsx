@@ -22,7 +22,7 @@ export default function ProfilePage() {
 
                 <div className={css.avatarWrapper}>
                     <Image
-                        src="/avatar.jpg"   // шлях до картинки у папці public
+                        src="/avatar.jpg"
                         alt="User Avatar"
                         width={120}
                         height={120}

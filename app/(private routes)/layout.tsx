@@ -1,5 +1,10 @@
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
+import { ReactNode } from "react";
 
-export default function PrivateLayout({ children }: { children: React.ReactNode }) {
+interface PrivateLayoutProps {
+    children: ReactNode;
+}
+
+export default function PrivateLayout({ children }: PrivateLayoutProps) {
     return <AuthProvider>{children}</AuthProvider>;
 }
