@@ -5,7 +5,7 @@ import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
 import { Roboto } from 'next/font/google';
 import AuthProvider from '@/components/AuthProvider/AuthProvider';
 import 'modern-normalize';
-import './globals.css';
+import css from './page.module.css'
 export const metadata: Metadata = {
   title: 'NoteHub',
   description: 'A simple and efficient app for creating and organizing your notes.',
