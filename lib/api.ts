@@ -4,7 +4,7 @@ import type { NewNoteData, Note } from "@/types/note";
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
 const instance = axios.create({
-    baseURL: "https://notehub-api.goit.study/docs",
+    baseURL: "https://notehub-api.goit.study",
 
     headers: token ? { Authorization: `Bearer ${token}` } : {},
 });
