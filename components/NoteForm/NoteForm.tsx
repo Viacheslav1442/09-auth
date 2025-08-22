@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNoteStore } from '../../lib/store/authStore'
 import css from '@/css/NoteForm.module.css';
-import { addNote } from '../../lib/api';
+import { addNote } from '../../lib/api/api';
 import type { NewNoteData } from '@/types/note';
 
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';

@@ -1,16 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotes } from "@/lib/api";
+import { fetchNotes } from "../../../lib/api/api";
 import type { Note } from "@/types/note";
-import type { FetchNotesResponse } from "@/lib/api";
+import type { FetchNotesResponse } from "../../../lib/api/api";
 
 export default function NotesPage() {
     const { data, isLoading, isError } = useQuery<Note[]>({
         queryKey: ["notes"],
         queryFn: async () => {
             const res: FetchNotesResponse = await fetchNotes();
-            return res.notes; // якщо у відповіді є notes
+            return res.notes;
         },
     });
 
