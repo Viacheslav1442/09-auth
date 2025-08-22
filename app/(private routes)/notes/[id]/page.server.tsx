@@ -6,7 +6,7 @@ import {
 import NoteDetailsClient from "./NoteDetails.client";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getNoteById } from "@/lib/api/clientApi"; // <- исправлено
+import { fetchNoteById } from "../../../../lib/api/api"; // <- исправлено
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
 
     try {
-        const note = await getNoteById(id); // <- исправлено
+        const note = await fetchNoteById(id); // <- исправлено
         return {
             title: `${note.title} | NoteHub`,
             description:
