@@ -3,11 +3,18 @@ import { api } from '../../api';
 import { isAxiosError } from 'axios';
 import { logErrorResponse } from '../../_utils/utils';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+
+function getIdFromRequest(request: NextRequest) {
+    const pathname = request.nextUrl.pathname;
+    const parts = pathname.split('/');
+    return parts[parts.length - 1];
+}
+
+export async function GET(request: NextRequest) {
+    const id = getIdFromRequest(request);
+
     try {
         const cookieHeader = request.headers.get('cookie') || '';
-        const { id } = params;
-
         const res = await api.get(`/notes/${id}`, {
             headers: { Cookie: cookieHeader },
         });
@@ -26,11 +33,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
+    const id = getIdFromRequest(request);
+
     try {
         const cookieHeader = request.headers.get('cookie') || '';
-        const { id } = params;
-
         const res = await api.delete(`/notes/${id}`, {
             headers: { Cookie: cookieHeader },
         });
@@ -49,10 +56,11 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest) {
+    const id = getIdFromRequest(request);
+
     try {
         const cookieHeader = request.headers.get('cookie') || '';
-        const { id } = params;
         const body = await request.json();
 
         const res = await api.patch(`/notes/${id}`, body, {
