@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { api } from '../../api';
-import { parse } from 'cookie';
 import { isAxiosError } from 'axios';
 import { logErrorResponse } from '../../_utils/utils';
 
-type Props = {
-    params: { id: string };
-};
-
-export async function GET(request: NextRequest, { params }: Props) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const cookieHeader = request.headers.get('cookie') || '';
         const { id } = params;
 
-        const res = await api(`/notes/${id}`, {
+        const res = await api.get(`/notes/${id}`, {
             headers: { Cookie: cookieHeader },
         });
 
@@ -23,7 +18,7 @@ export async function GET(request: NextRequest, { params }: Props) {
             logErrorResponse(error.response?.data);
             return NextResponse.json(
                 { error: error.message, response: error.response?.data },
-                { status: error.status || 500 }
+                { status: error.response?.status || 500 }
             );
         }
         logErrorResponse({ message: (error as Error).message });
@@ -31,7 +26,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     }
 }
 
-export async function DELETE(request: NextRequest, { params }: Props) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const cookieHeader = request.headers.get('cookie') || '';
         const { id } = params;
@@ -46,7 +41,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
             logErrorResponse(error.response?.data);
             return NextResponse.json(
                 { error: error.message, response: error.response?.data },
-                { status: error.status || 500 }
+                { status: error.response?.status || 500 }
             );
         }
         logErrorResponse({ message: (error as Error).message });
@@ -54,7 +49,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
     }
 }
 
-export async function PATCH(request: NextRequest, { params }: Props) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const cookieHeader = request.headers.get('cookie') || '';
         const { id } = params;
@@ -70,7 +65,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
             logErrorResponse(error.response?.data);
             return NextResponse.json(
                 { error: error.message, response: error.response?.data },
-                { status: error.status || 500 }
+                { status: error.response?.status || 500 }
             );
         }
         logErrorResponse({ message: (error as Error).message });
