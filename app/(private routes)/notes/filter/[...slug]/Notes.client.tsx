@@ -8,9 +8,9 @@ import Link from 'next/link';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
-import { fetchNotes, FetchNotesResponse } from '../../../../../lib/api/api';
+import { fetchNotes } from '@/lib/api/clientApi';
+import type { FetchNotesResponse, NoteTag } from '@/types/note';
 import css from './NotesPage.module.css';
-import { NoteTag } from '@/types/note';
 
 interface NotesClientProps {
     initialData: FetchNotesResponse;
@@ -23,14 +23,23 @@ export default function NotesClient({ initialData, tag }: NotesClientProps) {
 
     const { data, isLoading, isError } = useQuery<FetchNotesResponse>({
         queryKey: ['notes', searchQuery, currentPage, tag],
-        queryFn: () =>
-            fetchNotes(
-                currentPage,
-                12,
-                searchQuery,
-                tag !== 'All' ? (tag as string) : undefined
-            ),
+        queryFn: async () => {
+            const result = await fetchNotes({
+                page: currentPage,
+                perPage: 12,
+                search: searchQuery,
+                tag: tag !== 'All' ? (tag as string) : undefined,
+            });
 
+            // Приводимо до FetchNotesResponse
+            return {
+                notes: result.notes,
+                total: result.total,
+                page: currentPage,
+                perPage: 12,
+                totalPages: Math.max(1, Math.ceil(result.total / 12)),
+            } as FetchNotesResponse;
+        },
         placeholderData: initialData,
     });
 
@@ -65,7 +74,9 @@ export default function NotesClient({ initialData, tag }: NotesClientProps) {
                     </header>
 
                     {isLoading && <p className={css.info}>Loading notes…</p>}
-                    {isError && <p className={css.error}>Failed to load notes. Try again later.</p>}
+                    {isError && (
+                        <p className={css.error}>Failed to load notes. Try again later.</p>
+                    )}
 
                     {!isLoading && notes.length === 0 && (
                         <p className={css.info}>No notes found.</p>

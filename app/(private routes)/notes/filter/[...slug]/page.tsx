@@ -1,5 +1,4 @@
-import type { FetchNotesResponse } from "../../../../../lib/api/api";
-import { fetchNotes } from "../../../../../lib/api/api";
+import { getNotesWithPaginationServer, FetchNotesResponse } from "@/lib/api/serverApi";
 import NotesClient from "./Notes.client";
 import type { Metadata } from "next";
 
@@ -30,16 +29,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
     };
 }
+
 export default async function Page({ params }: Props) {
     const resolvedParams = await params;
     const tag = resolvedParams.slug?.[0] ?? "All";
 
-    const data: FetchNotesResponse = await fetchNotes(
-        1,
-        12,
-        "",
-        tag !== "All" ? tag : undefined
+
+    const initialData: FetchNotesResponse = await getNotesWithPaginationServer(
+        1,                    // page
+        "",                   // search
+        tag !== "All" ? tag : "", // tag
+        12                    // perPage
     );
 
-    return <NotesClient initialData={data} tag={tag} />;
+    return <NotesClient initialData={initialData} tag={tag} />;
 }

@@ -1,6 +1,8 @@
 import css from "./ProfilePage.module.css";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import { getCurrentUserServer } from "@/lib/api/serverApi";
 
 export const metadata: Metadata = {
     title: "Profile",
@@ -9,20 +11,31 @@ export const metadata: Metadata = {
     openGraph: { title: "Profile", description: "User profile page" },
 };
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+    const user = await getCurrentUserServer();
+
+
+    if (!user) {
+        return (
+            <main className={css.mainContent}>
+                <p>User not found or not logged in.</p>
+            </main>
+        );
+    }
+
     return (
         <main className={css.mainContent}>
             <div className={css.profileCard}>
                 <div className={css.header}>
                     <h1 className={css.formTitle}>Profile Page</h1>
-                    <a href="/profile/edit" className={css.editProfileButton}>
+                    <Link href="/profile/edit" className={css.editProfileButton}>
                         Edit Profile
-                    </a>
+                    </Link>
                 </div>
 
                 <div className={css.avatarWrapper}>
                     <Image
-                        src="/avatar.jpg"
+                        src={user.avatar}
                         alt="User Avatar"
                         width={120}
                         height={120}
@@ -31,8 +44,8 @@ export default function ProfilePage() {
                 </div>
 
                 <div className={css.profileInfo}>
-                    <p>Username: your_username</p>
-                    <p>Email: your_email@example.com</p>
+                    <p>Username: {user.username}</p>
+                    <p>Email: {user.email}</p>
                 </div>
             </div>
         </main>

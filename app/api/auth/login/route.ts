@@ -1,10 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { api } from '@/lib/api/api';
-import { cookies } from 'next/headers';
-import { parse } from 'cookie';
-import { isAxiosError } from 'axios';
-import { logErrorResponse } from '../../_utils/utils';
-
+import { NextRequest, NextResponse } from "next/server";
+import { api } from "../../api";
+import { parse } from "cookie";
+import { isAxiosError } from "axios";
+import { logErrorResponse } from "../../_utils/utils";
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,14 +10,13 @@ export async function POST(req: NextRequest) {
         const apiRes = await api.post("auth/login", body);
 
         const setCookie = apiRes.headers["set-cookie"];
-
-
         const response = NextResponse.json(apiRes.data, { status: apiRes.status });
 
         if (setCookie) {
             const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
             for (const cookieStr of cookieArray) {
                 const parsed = parse(cookieStr);
+
                 const options = {
                     expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
                     path: parsed.Path,

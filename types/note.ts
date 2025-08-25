@@ -17,11 +17,12 @@ export interface NewNoteData {
     tag: NoteTag;
 }
 
-export interface FetchNoteResponse {
+export interface FetchNotesResponse {
     notes: Note[];
     total: number;
     page: number;
     perPage: number;
+    totalPages: number;
 }
 
 
