@@ -1,48 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { api } from "../../api";
-import { parse } from "cookie";
-import { isAxiosError } from "axios";
-import { logErrorResponse } from "../../_utils/utils";
+import { NextResponse } from 'next/server';
+import { api } from '../../api';
+import { cookies } from 'next/headers';
+import { isAxiosError } from 'axios';
+import { logErrorResponse } from '../../_utils/utils';
 
-export async function POST(req: NextRequest) {
+export async function POST() {
     try {
+        const cookieStore = await cookies();
 
-        const cookieHeader = req.headers.get("cookie") || "";
-        const parsedCookies = parse(cookieHeader);
+        const accessToken = cookieStore.get('accessToken')?.value;
+        const refreshToken = cookieStore.get('refreshToken')?.value;
 
-        const accessToken = parsedCookies.accessToken;
-        const refreshToken = parsedCookies.refreshToken;
+        await api.post('auth/logout', null, {
+            headers: {
+                Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
+            },
+        });
 
-        // Відправляємо logout на бекенд
-        await api.post(
-            "auth/logout",
-            null,
-            {
-                headers: {
-                    Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
-                },
-            }
-        );
+        cookieStore.delete('accessToken');
+        cookieStore.delete('refreshToken');
 
-
-        const response = NextResponse.json(
-            { message: "Logged out successfully" },
-            { status: 200 }
-        );
-
-        response.cookies.set("accessToken", "", { path: "/", maxAge: 0 });
-        response.cookies.set("refreshToken", "", { path: "/", maxAge: 0 });
-
-        return response;
+        return NextResponse.json({ message: 'Logged out successfully' }, { status: 200 });
     } catch (error) {
         if (isAxiosError(error)) {
             logErrorResponse(error.response?.data);
             return NextResponse.json(
                 { error: error.message, response: error.response?.data },
-                { status: error.status || 500 }
+                { status: error.status }
             );
         }
         logErrorResponse({ message: (error as Error).message });
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

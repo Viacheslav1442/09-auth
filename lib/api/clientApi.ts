@@ -21,9 +21,12 @@ export async function logout(): Promise<void> {
 }
 
 export async function getSession(): Promise<User | null> {
-    const res = await api.get("/auth/session").catch(() => null);
-    if (!res) return null;
-    return (res.data as User) ?? null;
+    try {
+        const { data } = await api.get<User>("/auth/session");
+        return data ?? null;
+    } catch {
+        return null;
+    }
 }
 
 // ---------------- USER ----------------
@@ -60,6 +63,7 @@ export async function createNote(payload: Partial<Note>): Promise<Note> {
     return data;
 }
 
-export async function deleteNote(id: string): Promise<void> {
-    await api.delete(`/notes/${id}`);
+export async function deleteNote(id: string): Promise<Note> {
+    const { data } = await api.delete<Note>(`/notes/${id}`);
+    return data;
 }

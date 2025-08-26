@@ -1,18 +1,17 @@
 "use server";
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { cookies } from "next/headers";
-import { parse } from "cookie";
 import type { User } from "@/types/user";
 import type { Note } from "@/types/note";
 
 // ----- Типи -----
 export interface FetchNotesResponse {
     notes: Note[];
-    total: number;      // Загальна кількість нотаток
-    page: number;       // Поточна сторінка
-    perPage: number;    // Нотаток на сторінку
-    totalPages: number; // Загальна кількість сторінок
+    total: number;
+    page: number;
+    perPage: number;
+    totalPages: number;
 }
 
 // ----- Axios -----
@@ -44,42 +43,18 @@ export async function updateUserProfileServer(data: Partial<User>): Promise<User
 }
 
 // ----- Сесії -----
-export async function checkSessionServer(cookieHeader?: string) {
-    const cookieStr = cookieHeader ?? (await cookies())
-        .getAll()
-        .map(({ name, value }) => `${name}=${value}`)
-        .join("; ");
+export async function checkSessionServer(cookieHeader?: string): Promise<AxiosResponse> {
+    const cookieStr =
+        cookieHeader ??
+        (await cookies())
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; ");
 
     const apiRes = await api.get("/auth/session", { headers: { Cookie: cookieStr } });
-    const setCookie = apiRes.headers["set-cookie"];
-
-    let cookiesArray: Array<{
-        name: string;
-        value: string | undefined;
-        options: { expires?: Date; path?: string; maxAge?: number };
-    }> = [];
-
-    if (setCookie) {
-        const arr = Array.isArray(setCookie) ? setCookie : [setCookie];
-        cookiesArray = arr.map((cookieStr) => {
-            const parsed = parse(cookieStr);
-            const name = Object.keys(parsed)[0];
-            return {
-                name,
-                value: parsed[name],
-                options: {
-                    expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-                    path: parsed.Path,
-                    maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
-                },
-            };
-        });
-    }
-
-    return { valid: true, cookies: cookiesArray };
+    return apiRes;
 }
 
-// Експорт для middleware
 export { checkSessionServer as checkSession };
 
 // ----- Нотатки -----
