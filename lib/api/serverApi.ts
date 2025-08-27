@@ -43,7 +43,7 @@ export async function updateUserProfileServer(data: Partial<User>): Promise<User
     return response.data;
 }
 
-// ----- Сесії -----
+// ----- Сесії ----
 export const checkSessionServer = async (): Promise<boolean> => {
     const cookieStore = await cookies();
     const { data } = await api.get('/auth/session', { headers: { Cookie: cookieStore.toString(), }, });
