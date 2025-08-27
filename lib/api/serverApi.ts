@@ -4,6 +4,7 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import type { User } from "@/types/user";
 import type { Note } from "@/types/note";
+import { api } from "./api";
 
 
 // ----- Типи -----
@@ -15,11 +16,6 @@ export interface FetchNotesResponse {
     totalPages: number;
 }
 
-// ----- Axios -----
-const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL + "/api",
-    headers: { "Content-Type": "application/json" },
-});
 
 // ----- Користувачі -----
 export async function getCurrentUserServer(): Promise<User | null> {
