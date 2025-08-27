@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNoteStore } from '@/lib/store/noteStore';
 import css from '@/css/NoteForm.module.css';
 import { createNote } from '../../lib/api/clientApi';
-import type { NewNoteData, Note } from '@/types/note';
+import type { NewNoteData } from '@/types/note';
 
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 export type NotePayload = {
