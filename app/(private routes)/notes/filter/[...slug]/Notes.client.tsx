@@ -67,7 +67,7 @@ export default function NotesClient({
             {data && data.totalPages > 1 && (
                 <div className={css.centered}>
                     <Pagination
-                        pageCount={data.totalPages}
+                        totalPages={data.totalPages}
                         currentPage={page}
                         onPageChange={handlePageChange}
                     />
