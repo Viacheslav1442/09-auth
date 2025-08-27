@@ -4,7 +4,7 @@ import css from "./EditProfilePage.module.css";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, updateMe } from "@/lib/api/clientApi";
+import { getCurrentUser, updateCurrentUser } from '@/lib/api/clientApi';
 import { useAuthStore } from "@/lib/store/authStore";
 
 export default function EditProfilePage() {
@@ -17,7 +17,7 @@ export default function EditProfilePage() {
 
     useEffect(() => {
         (async () => {
-            const me = await getMe().catch(() => null);
+            const me = await getCurrentUser().catch(() => null);
             if (me) {
                 setUsername(me.username);
                 setEmail(me.email);
@@ -28,7 +28,7 @@ export default function EditProfilePage() {
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const updatedUser = await updateMe({ username });
+        const updatedUser = await updateCurrentUser({ username });
         setUser(updatedUser);
         router.replace("/profile");
     };
