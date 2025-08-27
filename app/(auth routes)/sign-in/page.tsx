@@ -1,59 +1,70 @@
-'use client';
+"use client";
 
-import css from "./SignInPage.module.css";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { loginUser, type LoginData } from "@/lib/api/clientApi";
-import { useRouter } from "next/navigation";
-import type { User } from "@/types/user";
+import { loginUser } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
-import type { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import css from "./SignInPage.module.css";
 
 export default function SignInPage() {
-    const [error, setError] = useState<string>("");
     const router = useRouter();
-    const setUser = useAuthStore((state) => state.setUser);
-    const clear = useAuthStore((state) => state.clear);
+    const { setUser } = useAuthStore();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
-    const mutation = useMutation<User, AxiosError<{ message?: string }>, LoginData>({
-        mutationFn: (loginData) => loginUser(loginData),
-        onSuccess: (user) => {
-            setUser(user);
-            router.replace("/profile");
-        },
-        onError: (err) => {
-            setError(err.response?.data?.message ?? "Login error");
-        },
-    });
-
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
-        const form = new FormData(e.currentTarget);
-        const email = String(form.get("email"));
-        const password = String(form.get("password"));
+        setError(null);
 
-        mutation.mutate({ email, password });
+        try {
+            const user = await loginUser(email, password);
+            setUser(user);
+            router.push("/profile");
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("Invalid email or password");
+        }
     };
 
     return (
         <main className={css.mainContent}>
-            <form className={css.form} onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit} className={css.form}>
                 <h1 className={css.formTitle}>Sign in</h1>
+
                 <div className={css.formGroup}>
                     <label htmlFor="email">Email</label>
-                    <input id="email" type="email" name="email" className={css.input} required />
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className={css.input}
+                        required
+                    />
                 </div>
+
                 <div className={css.formGroup}>
                     <label htmlFor="password">Password</label>
-                    <input id="password" type="password" name="password" className={css.input} required />
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={css.input}
+                        required
+                    />
                 </div>
+
                 <div className={css.actions}>
-                    <button type="submit" className={css.submitButton} disabled={mutation.isPending}>
-                        {mutation.isPending ? "…" : "Log in"}
+                    <button type="submit" className={css.submitButton}>
+                        Log in
                     </button>
                 </div>
-                <p className={css.error}>{error}</p>
+
+                {error && <p className={css.error}>{error}</p>}
             </form>
         </main>
     );
