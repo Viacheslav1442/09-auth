@@ -44,10 +44,12 @@ export async function updateUserProfileServer(data: Partial<User>): Promise<User
 }
 
 // ----- Сесії ----
-export const checkSessionServer = async (): Promise<boolean> => {
+export const checkSessionServer = async () => {
     const cookieStore = await cookies();
-    const { data } = await api.get('/auth/session', { headers: { Cookie: cookieStore.toString(), }, });
-    return data.success;
+    const response = await api.get('/auth/session', {
+        headers: { Cookie: cookieStore.toString() },
+    });
+    return response;
 };
 // ----- Нотатки -----
 export async function getNotesServer(): Promise<Note[]> {
