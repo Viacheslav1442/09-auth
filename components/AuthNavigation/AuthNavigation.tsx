@@ -3,7 +3,7 @@
 import Link from "next/link";
 import css from "./AuthNavigation.module.css";
 import { useAuthStore } from "@/lib/store/authStore";
-import { logout } from "@/lib/api/clientApi";
+import { logoutUser } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 
 export default function AuthNavigation() {
@@ -12,7 +12,7 @@ export default function AuthNavigation() {
 
     const onLogout = async () => {
         try {
-            await logout();
+            await logoutUser();
         } finally {
             clear();
             router.push("/sign-in");

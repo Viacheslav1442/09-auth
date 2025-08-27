@@ -1,40 +1,31 @@
-"use client";
+'use client';
 
-import { ReactNode, useEffect, useState } from "react";
-import { getSession, logout } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
-import { useRouter } from "next/navigation";
-import css from "./AuthProvider.module.css";
+import { checkSessionServer, getCurrentUserServer as getMe } from '@/lib/api/serverApi';
+import { useAuthStore } from '../../lib/store/authStore';
+import { useEffect } from 'react';
 
-export default function AuthProvider({ children }: { children: ReactNode }) {
-    const { setUser, clear } = useAuthStore();
-    const [checking, setChecking] = useState(true);
-    const router = useRouter();
+type Props = {
+    children: React.ReactNode;
+};
+
+const AuthProvider = ({ children }: Props) => {
+    const setUser = useAuthStore((state) => state.setUser);
+    const clear = useAuthStore((state) => state.clear);
 
     useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const user = await getSession();
-                if (user) {
-                    setUser(user);
-                } else {
-                    await logout().catch(() => void 0);
-                    clear();
-                    router.replace("/sign-in");
-                    return;
-                }
-            } finally {
-                if (mounted) setChecking(false);
+        const fetchUser = async () => {
+            const isAuthenticated = await checkSessionServer();
+            if (isAuthenticated) {
+                const user = await getMe();
+                if (user) setUser(user);
+            } else {
+                clear();
             }
-        })();
-        return () => {
-            mounted = false;
         };
-    }, [setUser, clear, router]);
+        fetchUser();
+    }, [setUser, clear]);
 
-    if (checking) {
-        return <div className={css.loader} aria-busy="true">Loading…</div>;
-    }
-    return <>{children}</>;
-}
+    return children;
+};
+
+export default AuthProvider;

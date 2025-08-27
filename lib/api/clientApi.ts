@@ -1,69 +1,88 @@
+
 import { api } from "./api";
-import type { User } from "@/types/user";
-import type { Note } from "@/types/note";
+import { Note, NewNoteData } from "@/types/note";
+import { User } from "@/types/user";
 
-type AuthPayload = { email: string; password: string };
-
-// ---------------- AUTH ----------------
-
-export async function register(payload: AuthPayload): Promise<User> {
-    const { data } = await api.post<User>("/auth/register", payload);
-    return data;
+export interface NoteResponse {
+    notes: Note[];
+    totalPages: number;
 }
 
-export async function login(payload: AuthPayload): Promise<User> {
-    const { data } = await api.post<User>("/auth/login", payload);
-    return data;
-}
+const cache: Record<string, NoteResponse> = {};
 
-export async function logout(): Promise<void> {
-    await api.post("/auth/logout");
-}
-
-export async function getSession(): Promise<User | null> {
-    try {
-        const { data } = await api.get<User>("/auth/session");
-        return data ?? null;
-    } catch {
-        return null;
-    }
-}
-
-// ---------------- USER ----------------
-
-export async function getMe(): Promise<User> {
-    const { data } = await api.get<User>("/users/me");
-    return data;
-}
-
-export async function updateMe(payload: Partial<User>): Promise<User> {
-    const { data } = await api.patch<User>("/users/me", payload);
-    return data;
-}
-
-// ---------------- NOTES ----------------
-
-export async function fetchNotes(params?: {
+interface FetchNotesParams {
+    page: number;
+    perPage: number;
     search?: string;
-    page?: number;
-    perPage?: number;
     tag?: string;
-}): Promise<{ notes: Note[]; total: number }> {
-    const { data } = await api.get("/notes", { params });
+}
+
+export async function fetchNotes(
+    page = 1,
+    perPage = 12,
+    search = "",
+    category?: string
+): Promise<NoteResponse> {
+    const params: FetchNotesParams = { page, perPage };
+    if (search.trim()) params.search = search.trim();
+    if (category && category.toLowerCase() !== "all") params.tag = category;
+
+    const cacheKey = JSON.stringify(params);
+    if (cache[cacheKey]) return cache[cacheKey];
+
+    const data = await api
+        .get<NoteResponse>("/notes", { params })
+        .then((res) => res.data);
+    cache[cacheKey] = data;
     return data;
 }
 
 export async function fetchNoteById(id: string): Promise<Note> {
-    const { data } = await api.get<Note>(`/notes/${id}`);
-    return data;
+    return api.get<Note>(`/notes/${id}`).then((res) => res.data);
 }
 
-export async function createNote(payload: Partial<Note>): Promise<Note> {
-    const { data } = await api.post<Note>("/notes", payload);
-    return data;
+export async function createNote(newNote: NewNoteData): Promise<Note> {
+    return api.post<Note>("/notes", newNote).then((res) => res.data);
 }
 
-export async function deleteNote(id: string): Promise<Note> {
-    const { data } = await api.delete<Note>(`/notes/${id}`);
-    return data;
+export async function deleteNote(noteId: string): Promise<Note> {
+    return api.delete<Note>(`/notes/${noteId}`).then((res) => res.data);
 }
+
+export const registerUser = async (
+    email: string,
+    password: string
+): Promise<User> => {
+    return api
+        .post<User>("/auth/register", { email, password })
+        .then((res) => res.data);
+};
+
+export const loginUser = async (
+    email: string,
+    password: string
+): Promise<User> => {
+    return api
+        .post<User>("/auth/login", { email, password })
+        .then((res) => res.data);
+};
+
+export const logoutUser = async (): Promise<void> => {
+    await api.post("/auth/logout").then((res) => res.data);
+};
+
+export const getSession = async (): Promise<{ valid: boolean }> => {
+    return api.get<{ valid: boolean }>("/auth/session").then((res) => res.data);
+};
+
+export const getCurrentUser = async (): Promise<User> => {
+    return api.get<User>("/users/me").then((res) => res.data);
+};
+
+export const updateCurrentUser = async (
+    payload: User
+): Promise<User> => {
+    return api.patch<User>("/users/me", payload).then((res) => res.data);
+};
+
+export { api };

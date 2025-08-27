@@ -1,9 +1,10 @@
 "use server";
 
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { cookies } from "next/headers";
 import type { User } from "@/types/user";
 import type { Note } from "@/types/note";
+
 
 // ----- Типи -----
 export interface FetchNotesResponse {
@@ -43,20 +44,11 @@ export async function updateUserProfileServer(data: Partial<User>): Promise<User
 }
 
 // ----- Сесії -----
-export async function checkSessionServer(cookieHeader?: string): Promise<AxiosResponse> {
-    const cookieStr =
-        cookieHeader ??
-        (await cookies())
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; ");
-
-    const apiRes = await api.get("/auth/session", { headers: { Cookie: cookieStr } });
-    return apiRes;
-}
-
-export { checkSessionServer as checkSession };
-
+export const checkSessionServer = async (): Promise<boolean> => {
+    const cookieStore = await cookies();
+    const { data } = await api.get('/auth/session', { headers: { Cookie: cookieStore.toString(), }, });
+    return data.success;
+};
 // ----- Нотатки -----
 export async function getNotesServer(): Promise<Note[]> {
     const cookieStore = await cookies();

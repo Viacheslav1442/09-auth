@@ -3,10 +3,10 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNoteStore } from '@/lib/store/authStore';
+import { useNoteStore } from '@/lib/store/noteStore';
 import css from '@/css/NoteForm.module.css';
-import { createNote } from '@/lib/api/clientApi';
-import type { Note, NewNoteData } from '@/types/note';
+import { createNote } from '../../lib/api/clientApi';
+import type { NewNoteData, Note } from '@/types/note';
 
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 export type NotePayload = {
@@ -51,6 +51,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
         setForm(normalizeDraft(draft));
     }, [draft]);
 
+
     const mutation = useMutation({
         mutationFn: (payload: NewNoteData) => createNote(payload),
         onSuccess: () => {
@@ -84,6 +85,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
             return;
         }
 
+
         const payload: NewNoteData = {
             title: form.title,
             content: form.content,
@@ -96,6 +98,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
         router.back();
         onClose?.();
     };
+
 
     const isSubmitting = mutation.isPending;
 
