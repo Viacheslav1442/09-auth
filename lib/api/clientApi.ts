@@ -1,7 +1,6 @@
-
 import { api } from "./api";
 import { Note, NewNoteData } from "@/types/note";
-import { User } from "@/types/user";
+import { User, UpdateUser } from "@/types/user";
 
 export interface NoteResponse {
     notes: Note[];
@@ -67,7 +66,6 @@ export const loginUser = async (
         .then((res) => res.data);
 };
 
-
 export const logoutUser = async (): Promise<void> => {
     await api.post("/auth/logout").then((res) => res.data);
 };
@@ -81,15 +79,9 @@ export const getCurrentUser = async (): Promise<User> => {
 };
 
 export const updateCurrentUser = async (
-    payload: User
+    payload: UpdateUser
 ): Promise<User> => {
     return api.patch<User>("/users/me", payload).then((res) => res.data);
 };
 
 export { api };
-
-export interface LoginData {
-    email: string;
-    password: string;
-}
-
