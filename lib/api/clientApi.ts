@@ -58,13 +58,9 @@ export const registerUser = async (
         .then((res) => res.data);
 };
 
-export const loginUser = async (
-    email: string,
-    password: string
-): Promise<User> => {
-    return api
-        .post<User>("/auth/login", { email, password })
-        .then((res) => res.data);
+export const loginUser = async ({ email, password }: LoginData): Promise<User> => {
+    const { data } = await api.post<User>("/auth/login", { email, password });
+    return data;
 };
 
 export const logoutUser = async (): Promise<void> => {
@@ -86,3 +82,9 @@ export const updateCurrentUser = async (
 };
 
 export { api };
+
+export interface LoginData {
+    email: string;
+    password: string;
+}
+

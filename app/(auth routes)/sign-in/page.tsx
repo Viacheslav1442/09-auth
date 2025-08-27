@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import css from "./SignInPage.module.css";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "@/lib/api/clientApi";
+import { loginUser, type LoginData } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 import type { User } from "@/types/user";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -12,16 +12,16 @@ import type { AxiosError } from "axios";
 export default function SignInPage() {
     const [error, setError] = useState<string>("");
     const router = useRouter();
-    const { setUser } = useAuthStore();
+    const setUser = useAuthStore((state) => state.setUser);
+    const clear = useAuthStore((state) => state.clear);
 
-    const m = useMutation({
-        mutationFn: login,
-        onSuccess: (user: User) => {
+    const mutation = useMutation<User, AxiosError<{ message?: string }>, LoginData>({
+        mutationFn: (loginData) => loginUser(loginData),
+        onSuccess: (user) => {
             setUser(user);
             router.replace("/profile");
         },
-        onError: (e: unknown) => {
-            const err = e as AxiosError<{ message?: string }>;
+        onError: (err) => {
             setError(err.response?.data?.message ?? "Login error");
         },
     });
@@ -32,7 +32,8 @@ export default function SignInPage() {
         const form = new FormData(e.currentTarget);
         const email = String(form.get("email"));
         const password = String(form.get("password"));
-        m.mutate({ email, password });
+
+        mutation.mutate({ email, password });
     };
 
     return (
@@ -48,8 +49,8 @@ export default function SignInPage() {
                     <input id="password" type="password" name="password" className={css.input} required />
                 </div>
                 <div className={css.actions}>
-                    <button type="submit" className={css.submitButton} disabled={m.isPending}>
-                        {m.isPending ? "…" : "Log in"}
+                    <button type="submit" className={css.submitButton} disabled={mutation.isPending}>
+                        {mutation.isPending ? "…" : "Log in"}
                     </button>
                 </div>
                 <p className={css.error}>{error}</p>
