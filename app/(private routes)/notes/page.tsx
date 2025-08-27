@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchNotes } from "@/lib/api/clientApi";
 import type { Note } from "@/types/note";
-import css from "./NotesPage.module.css";
+import css from "../../page.module.css";
 
 export default function NotesPage() {
     const [page, setPage] = useState(1);
