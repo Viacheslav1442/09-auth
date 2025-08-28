@@ -6,7 +6,6 @@ import type { User } from "@/types/user";
 import type { Note } from "@/types/note";
 import { api } from "./api";
 
-
 // ----- Типи -----
 export interface FetchNotesResponse {
     notes: Note[];
@@ -15,7 +14,6 @@ export interface FetchNotesResponse {
     perPage: number;
     totalPages: number;
 }
-
 
 // ----- Користувачі -----
 export async function getCurrentUserServer(): Promise<User | null> {
@@ -39,14 +37,17 @@ export async function updateUserProfileServer(data: Partial<User>): Promise<User
     return response.data;
 }
 
-// ----- Сесії ----
+// ----- Сесії -----
 export const checkSessionServer = async () => {
     const cookieStore = await cookies();
-    const response = await api.get('/auth/session', {
-        headers: { Cookie: cookieStore.toString() },
+    const cookieStr = cookieStore.getAll().map(({ name, value }) => `${name}=${value}`).join("; ");
+
+    const response = await api.get("/auth/session", {
+        headers: { Cookie: cookieStr },
     });
     return response;
 };
+
 // ----- Нотатки -----
 export async function getNotesServer(): Promise<Note[]> {
     const cookieStore = await cookies();

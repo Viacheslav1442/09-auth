@@ -1,8 +1,8 @@
 'use client';
 
-import { checkSessionServer, getCurrentUserServer as getMe } from '@/lib/api/serverApi';
-import { useAuthStore } from '../../lib/store/authStore';
 import { useEffect } from 'react';
+import { useAuthStore } from '@/lib/store/authStore';
+import { getSession, getCurrentUser } from '@/lib/api/clientApi';
 
 type Props = {
     children: React.ReactNode;
@@ -14,14 +14,21 @@ const AuthProvider = ({ children }: Props) => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const isAuthenticated = await checkSessionServer();
-            if (isAuthenticated) {
-                const user = await getMe();
-                if (user) setUser(user);
-            } else {
+            try {
+                const session = await getSession();
+                if (session.valid) {
+                    const user = await getCurrentUser();
+                    if (user) {
+                        setUser(user);
+                    }
+                } else {
+                    clear();
+                }
+            } catch {
                 clear();
             }
         };
+
         fetchUser();
     }, [setUser, clear]);
 

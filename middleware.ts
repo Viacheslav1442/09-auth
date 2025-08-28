@@ -3,7 +3,8 @@ import { cookies } from 'next/headers';
 import { parse } from 'cookie';
 import { checkSessionServer } from './lib/api/serverApi';
 
-const privateRoutes = ['/profile'];
+
+const privateRoutes = ['/profile', '/notes'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
 export async function middleware(request: NextRequest) {
@@ -12,12 +13,12 @@ export async function middleware(request: NextRequest) {
     const accessToken = cookieStore.get('accessToken')?.value;
     const refreshToken = cookieStore.get('refreshToken')?.value;
 
-    const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-    const isPrivateRoute = privateRoutes.some((route) => pathname.startsWith(route));
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+    const isPrivateRoute = privateRoutes.some(route => pathname.startsWith(route));
+
 
     if (!accessToken) {
         if (refreshToken) {
-
             const data = await checkSessionServer();
             const setCookie = data.headers['set-cookie'];
 
@@ -30,8 +31,10 @@ export async function middleware(request: NextRequest) {
                         path: parsed.Path,
                         maxAge: Number(parsed['Max-Age']),
                     };
-                    if (parsed.accessToken) cookieStore.set('accessToken', parsed.accessToken, options);
-                    if (parsed.refreshToken) cookieStore.set('refreshToken', parsed.refreshToken, options);
+                    if (parsed.accessToken)
+                        cookieStore.set('accessToken', parsed.accessToken, options);
+                    if (parsed.refreshToken)
+                        cookieStore.set('refreshToken', parsed.refreshToken, options);
                 }
 
                 if (isPublicRoute) {
@@ -51,6 +54,7 @@ export async function middleware(request: NextRequest) {
                 }
             }
         }
+
 
         if (isPublicRoute) {
             return NextResponse.next();
@@ -72,6 +76,12 @@ export async function middleware(request: NextRequest) {
     }
 }
 
+// ----- matcher -----
 export const config = {
-    matcher: ['/profile/:path*', '/sign-in', '/sign-up'],
+    matcher: [
+        '/profile/:path*',
+        '/notes/:path*',
+        '/sign-in',
+        '/sign-up',
+    ],
 };
