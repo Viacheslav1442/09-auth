@@ -6,6 +6,11 @@
     width: 100%;
 }
 
+.left {
+    flex: 1;
+
+}
+
 .searchBar input {
     max-width: 240px;
 
