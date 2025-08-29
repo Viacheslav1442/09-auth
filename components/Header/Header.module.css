@@ -7,31 +7,32 @@
     color: white;
 }
 
-.header a {
-    text-decoration: none;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.header a:hover {
-    color: #ddd;
-}
-
-.navigation {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+.actions {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
 }
 
-.navigation li a {
-    text-decoration: none;
-    color: white;
-    font-size: 1rem;
+
+.actions input {
+    flex: 1;
+    margin-right: 1rem;
+
 }
 
-.navigation li a:hover {
-    color: #ddd;
+.createBtn {
+    padding: 6px 12px;
+    font-size: 16px;
+    background: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+
+}
+
+.createBtn:hover {
+    background: #0056b3;
 }
