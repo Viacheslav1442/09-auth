@@ -1,28 +1,8 @@
-.searchBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    width: 100%;
-}
-
-
-.searchBar input {
+.input {
+    flex: 1;
     max-width: 240px;
-
-}
-
-.createBtn {
     padding: 6px 12px;
     font-size: 16px;
-    background: #007bff;
-    border: none;
+    border: 1px solid #ced4da;
     border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.createBtn:hover {
-    background: #0056b3;
 }
